@@ -1,10 +1,10 @@
 # Plan
 
 ## Phase 0: Setup
-- [ ] Create project with `uv init` and push to a GitHub repo
-- [ ] Add CLAUDE.md, docs/PLAN.md, docs/DECISIONS.md
+- [x] Create project with `uv init` and push to a GitHub repo
+- [x] Add CLAUDE.md, docs/PLAN.md, docs/DECISIONS.md
 - [ ] docker-compose.yml with Postgres; confirm it starts and accepts connections
-- [ ] `.env.example` for database and API credentials (real `.env` gitignored)
+- [x] `.env.example` for database and API credentials (real `.env` gitignored)
 
 ## Phase 1: Data and MCP server
 - [ ] Design the ERP schema: vendors, purchase orders, PO line items, receipts, invoices, payments, exceptions

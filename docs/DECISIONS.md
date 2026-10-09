@@ -19,3 +19,7 @@ A running log of design choices and why. Newest at the bottom. Format: what was 
 
 ### Claude Code as the coding agent, no Copilot for now
 **Why:** Agent workflow suits multi-file plumbing and can act as an MCP client to test my own server. Skipping inline autocomplete so I actually write the MCP tools and graph myself.
+
+### Postgres 17 in Docker Compose for the ERP
+**Why:** Pinning the major version keeps the setup reproducible. A named volume keeps data across `docker compose down`. The port is bound to 127.0.0.1 only, so the database isn't exposed on the network. A `pg_isready` healthcheck gives a clear "ready" signal, which later scripts can wait on. Credentials live in `.env` (gitignored), and `.env.example` is the committed template.
+**Considered:** Installing Postgres natively on Windows (harder to reset and less portable); a bind-mounted data folder (Windows file permission issues).

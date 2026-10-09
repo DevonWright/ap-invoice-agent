@@ -1,0 +1,28 @@
+# Postgres acting as the "ERP": vendors, purchase orders, receipts, payments.
+# Values come from .env (Compose reads it automatically). Copy .env.example to .env first.
+
+services:
+  db:
+    image: postgres:17
+    container_name: ap-invoice-db
+    restart: unless-stopped
+    environment:
+      # ${VAR:?msg} makes compose fail with msg if the variable is missing, instead of using an empty value
+      POSTGRES_USER: ${POSTGRES_USER:?set POSTGRES_USER in .env}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
+      POSTGRES_DB: ${POSTGRES_DB:?set POSTGRES_DB in .env}
+    ports:
+      # Bound to 127.0.0.1 so the database is only reachable from this machine
+      - "127.0.0.1:${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      # Named volume: data survives `docker compose down` (use `down -v` to wipe it)
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      # $$ escapes $ so the variable is expanded inside the container, not by compose
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  pgdata:
