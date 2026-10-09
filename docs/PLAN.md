@@ -3,7 +3,7 @@
 ## Phase 0: Setup
 - [x] Create project with `uv init` and push to a GitHub repo
 - [x] Add CLAUDE.md, docs/PLAN.md, docs/DECISIONS.md
-- [ ] docker-compose.yml with Postgres; confirm it starts and accepts connections
+- [x] docker-compose.yml with Postgres; confirm it starts and accepts connections
 - [x] `.env.example` for database and API credentials (real `.env` gitignored)
 
 ## Phase 1: Data and MCP server
