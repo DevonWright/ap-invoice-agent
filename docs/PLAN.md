@@ -7,12 +7,23 @@
 - [x] `.env.example` for database and API credentials (real `.env` gitignored)
 
 ## Phase 1: Data and MCP server
-- [ ] Design the ERP schema: vendors, purchase orders, PO line items, receipts, invoices, payments, exceptions
+Work backward from scenarios: scenarios, then the questions and actions each needs, then tools, then schema, then seed data.
+- [ ] Define scenarios and expected outcomes in `docs/SCENARIOS.md` (in progress: clean match and price mismatch done)
+  - [x] Clean match under and over agent threshold
+  - [x] Price mismatch (line level, header level, within tolerance, netting)
+  - [ ] Approval rejected, threshold and tolerance boundaries
+  - [ ] Partial delivery
+  - [ ] Duplicate invoice
+  - [ ] Unknown or inactive vendor
+  - [ ] Invoice references a nonexistent PO
+  - [ ] Multiple problems on one invoice
+- [ ] List the questions and actions each scenario needs
+- [ ] Design the ERP schema: vendors, purchase orders, PO line items, receipts, invoices, payments, exceptions, approval requests
 - [ ] Seed script that generates realistic fake data
-- [ ] Deliberate exceptions mixed in: price mismatch, partial delivery, duplicate invoice, unknown vendor, over approval threshold
+- [ ] Seed data covers every scenario in `docs/SCENARIOS.md`
 - [ ] Generate invoice PDFs into an `inbox/` folder
 - [ ] Record the expected outcome for each invoice (future eval set)
-- [ ] MCP server tools (I write these): `get_purchase_order`, `get_receipts`, `check_duplicate`, `flag_exception`, `create_payment`
+- [ ] MCP server tools (I write these): `get_purchase_order`, `get_receipts`, `check_duplicate`, `flag_exception`, `request_approval`, `create_payment`
 - [ ] Test every tool in the MCP Inspector
 - [ ] Connect the server to Claude Code and try it conversationally
 
@@ -27,18 +38,24 @@
 - [ ] Define graph state
 - [ ] Intake node: pick up an invoice
 - [ ] Extraction node: structured output into a Pydantic model
-- [ ] Match node: three-way match against PO and receipts
+- [ ] Match node: three-way match against PO and receipts, applying the price tolerance rules
 - [ ] Conditional routing by outcome: clean, price mismatch, partial delivery, duplicate, unknown vendor, over threshold
-- [ ] Human approval interrupt before `create_payment`
+- [ ] Over threshold ($1,000 and above): create approval request, then human approval interrupt before `create_payment`
+- [ ] Link each approval request to its graph thread so approving it resumes the right run
 - [ ] Postgres checkpointer; stop the app mid-approval and resume it
-- [ ] Draft vendor query for mismatches; escalation path for over-threshold
+- [ ] Exceptions include structured fields plus a plain-language summary
 
 ## Phase 4: Hardening
-- [ ] Write tools only reachable after approval
+- [ ] `create_payment` only reachable after a passing match, and after approval when at or above threshold
 - [ ] Handle unreadable PDFs and missing records gracefully
 - [ ] Move the MCP server to HTTP transport with auth
 - [ ] Move Langfuse to self-hosted in Docker
 - [ ] README with architecture diagram and demo vs production notes
+
+## Future features (out of scope for now)
+- Draft vendor query for price mismatches
+- Tiered approval matrix (e.g. controller, CFO) instead of a single threshold
+- Per-vendor tolerance settings
 
 ## Next build
 - Evals, using the labeled invoices from Phase 1
